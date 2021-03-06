@@ -1,0 +1,89 @@
+<div id="main">
+  <div class="title">
+    <h1>
+      Catendar
+    </h1>
+
+    <div class="loading">
+      <div class="spinner" *ngIf="loading">
+        <div class="lds-roller">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="choice">
+      <select type="string" [(ngModel)]="targetType">
+        <option *ngFor="let type of types" [value]="type">{{capitalizeFirstLetter(type)}}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="box" [ngSwitch]="targetType">
+    <div *ngSwitchCase="'today'">
+      <ng-container *ngTemplateOutlet="day; context:{ day : today }"></ng-container>
+    </div>
+    <div *ngSwitchCase="'week'">
+      <ng-container *ngTemplateOutlet="week"></ng-container>
+    </div>
+    <div *ngSwitchCase="'month'">
+      <ng-container *ngTemplateOutlet="month"></ng-container>
+    </div>
+    <div *ngSwitchCase="'year'">
+      <ng-container *ngTemplateOutlet="year"></ng-container>
+    </div>
+  </div>
+</div>
+
+<ng-template #year>
+  <h1>{{today.getFullYear()}}</h1>
+</ng-template>
+
+<ng-template #month>
+  <h1>{{capitalizeFirstLetter(months[today.getMonth()])}}</h1>
+</ng-template>
+
+<ng-template #week>
+  <div class="week">
+    <h1>Week #{{weekNumber}}</h1>
+    <div *ngFor="let weekday of thisWeek; let idx = index" class="week_day">
+      <ng-container *ngTemplateOutlet="day; context:{ day : weekday }"></ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #day let-targetDay="day">
+  <div class="day">
+    <div>
+      <h1>{{capitalizeFirstLetter(days[targetDay.getDay()])}} {{dateToString(targetDay)}}</h1>
+      <ng-container *ngTemplateOutlet="addNote; context:{ day : targetDay }"></ng-container>
+    </div>
+    <div *ngIf="allNotes[targetDay.getFullYear() - today.getFullYear()][targetDay.getMonth()][targetDay.getDate()].length === 0" class="no_notes">
+      No notes available for this day!
+    </div>
+    <div *ngFor="let targetNote of allNotes[targetDay.getFullYear() - today.getFullYear()][targetDay.getMonth()][targetDay.getDate()]; let idx = index; trackBy: trackByFn" class="content">
+      <!-- Header -->
+      <label (for)="'note' + idx" class="note_number"><u>Note #{{idx + 1}}</u>:</label>
+      <!-- Input Field -->
+      <input type="text" (id)="'note'+idx" class="textarea" #name [(ngModel)]="allNotes[targetDay.getFullYear() - today.getFullYear()][targetDay.getMonth()][targetDay.getDate()][idx]" (focusout)="saveFunction(targetDay)">
+      <!-- Remove Button -->
+      <button (click)="removeNoteFromDay(targetDay, idx)" class="remove_btn">X</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- <ng-container *ngTemplateOutlet="addNote; context:targetDay"></ng-container> -->
+<ng-template #addNote let-day="day">
+  <div class="add_note">
+    <button (click)="addNoteToDay(day)">
+      <img src='../../assets/note_add.svg' />
+    </button>
+  </div>
+</ng-template>
