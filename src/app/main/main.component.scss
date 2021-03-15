@@ -29,6 +29,11 @@
       background: -webkit-linear-gradient(#8e00b1, rgb(255, 0, 204));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+
+      -webkit-user-select: none;  /* Chrome all / Safari all */
+      -moz-user-select: none;     /* Firefox all */
+      -ms-user-select: none;      /* IE 10+ */
+      user-select: none;          /* Likely future */
     }
 
     .loading {
@@ -152,10 +157,26 @@
     border: 1px solid black;
     overflow-y: scroll;
 
+    &.not-single {
+      max-height: 70vh;
+    }
+
     h1 {
       display: inline-block;
+      text-align: center;
       margin: 1rem;
-      font-size: 3rem;
+      font-size: 2.75rem;
+      width: 20em;
+
+      &.not-single {
+        font-size: 1.5em;
+        width: unset;
+      }
+
+      -webkit-user-select: none;  /* Chrome all / Safari all */
+      -moz-user-select: none;     /* Firefox all */
+      -ms-user-select: none;      /* IE 10+ */
+      user-select: none;          /* Likely future */
     }
 
     .no_notes {
@@ -163,11 +184,20 @@
       text-align: center;
       font-size: 3rem;
       margin: 2rem auto;
+
+      &.not-single {
+        font-size: 1em;
+      }
     }
 
     .content {
       font-size: 2em;
       margin: 2rem 0.5rem 1rem 0.5rem;
+
+      &.not-single {
+        font-size: 1.5em;
+        margin: 0.25rem 0.1rem 0.25rem 0.1rem;
+      }
 
       .notes {
         overflow: scroll;
@@ -175,6 +205,10 @@
 
       .note_number {
         display: inline-block;
+
+        &.not-single {
+          font-size: 0.75em;
+        }
       }
 
       .textarea {
@@ -197,6 +231,16 @@
           background-color: white;
           color: black;
         }
+
+        &.not-single {
+          min-height: .7em;
+          line-height: .7em;
+          width: 100%;
+          font-size: 0.6em;
+
+          margin-left: 2px;
+          border: 1px solid black;
+        }
       }
 
       .remove_btn {
@@ -206,6 +250,13 @@
         height: 1.5em;
         border-radius: 50%;
         margin-left: 1rem;
+
+        // &.not-single {
+        //   width: 1em;
+        //   height: 1em;
+        //   margin-left: unset;
+        //   text-align: left;
+        // }
       }
     }
   }
@@ -213,20 +264,27 @@
   .week {
     max-height: 80vh;
     border: 2px solid black;
-    overflow-y: scroll;
+    overflow-y: hidden;
 
     h1 {
+      text-align: center;
       margin: 0.5rem;
+
+      -webkit-user-select: none;  /* Chrome all / Safari all */
+      -moz-user-select: none;     /* Firefox all */
+      -ms-user-select: none;      /* IE 10+ */
+      user-select: none;          /* Likely future */
     }
 
     .week_day {
       display: inline-block;
       vertical-align: top;
-      width: 14%;
-      height: 100%;
+      width: 13.95%;
+      height: 50%;
       // border: 1px solid black;
       text-align: center;
       margin-left: 0.25em;
+
     }
   }
 
@@ -237,6 +295,12 @@
     margin-left: 25%;
     width: 4rem;
     height: 4rem;
+
+    &.not-single {
+      margin-left: unset;
+      width: 2em;
+      height: 2em;
+    }
 
     button {
       width: 100%;
@@ -250,6 +314,18 @@
         width: 100%;
         height: 100%;
       }
+    }
+  }
+
+  .arrow {
+    font-size: 0.75em;
+    display: inline-block;
+    padding: 3px;
+    margin: 0 1em;
+
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
     }
   }
 }

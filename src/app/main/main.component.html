@@ -28,7 +28,7 @@
 
   <div class="box" [ngSwitch]="targetType">
     <div *ngSwitchCase="'today'">
-      <ng-container *ngTemplateOutlet="day; context:{ day : today }"></ng-container>
+      <ng-container *ngTemplateOutlet="day; context:{ day : targetDay, single : true }"></ng-container>
     </div>
     <div *ngSwitchCase="'week'">
       <ng-container *ngTemplateOutlet="week"></ng-container>
@@ -43,45 +43,76 @@
 </div>
 
 <ng-template #year>
-  <h1>{{today.getFullYear()}}</h1>
+  <h1>{{targetDay.getFullYear()}}</h1>
 </ng-template>
 
 <ng-template #month>
-  <h1>{{capitalizeFirstLetter(months[today.getMonth()])}}</h1>
+  <h1>{{capitalizeFirstLetter(months[targetDay.getMonth()])}}</h1>
 </ng-template>
 
 <ng-template #week>
   <div class="week">
-    <h1>Week #{{weekNumber}}</h1>
-    <div *ngFor="let weekday of thisWeek; let idx = index" class="week_day">
+
+    <h1>
+      <i class="arrow" (click)="arrow('week', 'left')">&lt;Previous</i>
+      <b>Week #{{weekNumber}}</b>
+      <i class="arrow" (click)="arrow('week', 'right')">Next></i>
+    </h1>
+    <div *ngFor="let weekday of targetWeek; let idx = index" class="week_day">
       <ng-container *ngTemplateOutlet="day; context:{ day : weekday }"></ng-container>
     </div>
   </div>
 </ng-template>
 
-<ng-template #day let-targetDay="day">
-  <div class="day">
+<ng-template #day let-targetDay="day" let-single="single">
+  <div [ngClass]="single ? 'day' : 'day not-single'">
     <div>
-      <h1>{{capitalizeFirstLetter(days[targetDay.getDay()])}} {{dateToString(targetDay)}}</h1>
-      <ng-container *ngTemplateOutlet="addNote; context:{ day : targetDay }"></ng-container>
+      <h1 [ngClass]="single ? '' : 'not-single'">
+        <i *ngIf="single" class="arrow" (click)="arrow('day', 'left')">&lt;Previous</i>
+        <b>{{capitalizeFirstLetter(days[targetDay.getDay()])}} {{dateToString(targetDay)}}</b>
+        <i *ngIf="single" class="arrow" (click)="arrow('day', 'right')">Next></i>
+      </h1>
+      <ng-container *ngTemplateOutlet="addNote; context:{ day : targetDay, single : single }"></ng-container>
     </div>
-    <div *ngIf="allNotes[targetDay.getFullYear() - today.getFullYear()][targetDay.getMonth()][targetDay.getDate()].length === 0" class="no_notes">
+    <div
+      *ngIf="allNotes[targetDay.getFullYear() - today.getFullYear() + 1][targetDay.getMonth()][targetDay.getDate()].length === 0"
+      [ngClass]="single ? 'no_notes' : 'no_notes not-single'"
+    >
       No notes available for this day!
     </div>
-    <div *ngFor="let targetNote of allNotes[targetDay.getFullYear() - today.getFullYear()][targetDay.getMonth()][targetDay.getDate()]; let idx = index; trackBy: trackByFn" class="content">
+    <div
+      *ngFor="let targetNote of allNotes[targetDay.getFullYear() - today.getFullYear() + 1][targetDay.getMonth()][targetDay.getDate()]; let idx = index; trackBy: trackByFn"
+      [ngClass]="single ? 'content' : 'content not-single'"
+    >
       <!-- Header -->
-      <label (for)="'note' + idx" class="note_number"><u>Note #{{idx + 1}}</u>:</label>
+      <label
+        (for)="'note' + idx"
+        [ngClass]="single ? 'note_number' : 'note_number not-single'"
+      >
+        <u>Note #{{idx + 1}}</u>:
+      </label>
       <!-- Input Field -->
-      <input type="text" (id)="'note'+idx" class="textarea" #name [(ngModel)]="allNotes[targetDay.getFullYear() - today.getFullYear()][targetDay.getMonth()][targetDay.getDate()][idx]" (focusout)="saveFunction(targetDay)">
+      <input
+        type="text"
+        (id)="'note'+idx"
+        [ngClass]="single ? 'textarea' : 'textarea not-single'"
+        [(ngModel)]="allNotes[targetDay.getFullYear() - today.getFullYear() + 1][targetDay.getMonth()][targetDay.getDate()][idx]"
+        (focusout)="saveFunction(targetDay)"
+      >
       <!-- Remove Button -->
-      <button (click)="removeNoteFromDay(targetDay, idx)" class="remove_btn">X</button>
+      <button
+        (click)="removeNoteFromDay(targetDay, idx)"
+        [ngClass]="single ? 'remove_btn' : 'remove_btn not-single'"
+      >
+        X
+      </button>
     </div>
   </div>
 </ng-template>
 
 <!-- <ng-container *ngTemplateOutlet="addNote; context:targetDay"></ng-container> -->
-<ng-template #addNote let-day="day">
-  <div class="add_note">
+<ng-template #addNote let-day="day" let-single="single">
+  <div [ngClass]="single ? 'add_note' : 'add_note not-single'">
     <button (click)="addNoteToDay(day)">
       <img src='../../assets/note_add.svg' />
     </button>
