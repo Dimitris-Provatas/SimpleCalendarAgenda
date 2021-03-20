@@ -186,7 +186,7 @@ export class MainComponent implements OnInit
   {
     this.targetDay.setMonth(this.months.indexOf(month));
     this.setupMonth(this.months.indexOf(month));
-    this.targetType = "month";
+    this.targetType = "μήνας";
     this.setup(this.targetDay);
   }
 
@@ -261,7 +261,7 @@ export class MainComponent implements OnInit
 
     switch (context)
     {
-      case "day":
+      case "μέρα":
         // check if it is the first day of the previous year or the last day of the next year
         // then change the allowedDirections as necassery
         switch (dir)
@@ -284,7 +284,7 @@ export class MainComponent implements OnInit
             break;
         }
         break;
-      case "week":
+      case "εβδομάδα":
         // check if it is the first wekk of the previous year or the last week of the next year
         // then change the allowedDirections as necassery
         switch (dir)
@@ -308,7 +308,7 @@ export class MainComponent implements OnInit
         }
         this.targetWeek = this.setupWeek(this.targetDay);
         break;
-      case "month":
+      case "μήνας":
         // check if it is the first month of the previous year or the last month of the next year
         // then change the allowedDirections as necassery
         switch (dir)
@@ -332,7 +332,7 @@ export class MainComponent implements OnInit
         }
         this.targetMonth = this.setupMonth(this.targetDay.getMonth());
         break;
-      case "year":
+      case "χρόνος":
         // check if it is the last year or the next year
         // then change the allowedDirections as necassery
         switch (dir)
