@@ -1,4 +1,7 @@
 <div id="main">
+  <div class="background_img_1"></div>
+  <div class="background_img_2"></div>
+
   <div class="title">
     <h1>
       Catendar
@@ -20,45 +23,72 @@
     </div>
 
     <div class="choice">
-      <select type="string" [(ngModel)]="targetType">
+      <select type="string" [(ngModel)]="targetType" (change)="setup(targetDay)">
         <option *ngFor="let type of types" [value]="type">{{capitalizeFirstLetter(type)}}</option>
       </select>
     </div>
   </div>
 
   <div class="box" [ngSwitch]="targetType">
-    <div *ngSwitchCase="'today'">
+    <div *ngSwitchCase="'μέρα'">
       <ng-container *ngTemplateOutlet="day; context:{ day : targetDay, single : true }"></ng-container>
     </div>
-    <div *ngSwitchCase="'week'">
+    <div *ngSwitchCase="'εβδομάδα'">
       <ng-container *ngTemplateOutlet="week"></ng-container>
     </div>
-    <div *ngSwitchCase="'month'">
+    <div *ngSwitchCase="'μήνας'">
       <ng-container *ngTemplateOutlet="month"></ng-container>
     </div>
-    <div *ngSwitchCase="'year'">
+    <div *ngSwitchCase="'χρόνος'">
       <ng-container *ngTemplateOutlet="year"></ng-container>
     </div>
   </div>
 </div>
 
 <ng-template #year>
-  <h1>{{targetDay.getFullYear()}}</h1>
+  <div class="year">
+    <h1>
+      <i class="arrow" (click)="arrow('year', 'left')">&lt;Προηγούμενος</i>
+      <u>{{targetDay.getFullYear()}}</u>
+      <i class="arrow" (click)="arrow('year', 'right')">Επόμενος></i>
+    </h1>
+    <div class="year_month" *ngFor="let month of targetYear">
+      Στον {{capitalizeFirstLetter(month.month).slice(0, -1)}},
+      <br>
+      υπάρχουν συνολικά
+      <br>
+      <u>{{month.numberOfNotes}} σημειώσεις</u>
+      <br>
+      σε
+      <br>
+      <u>{{month.daysWithNotes}} διαφορετικές μέρες</u>!
+      <br>
+      <button (click)="goToMonth(month.month)">Δες τες!</button>
+    </div>
+  </div>
 </ng-template>
 
 <ng-template #month>
-  <h1>{{capitalizeFirstLetter(months[targetDay.getMonth()])}}</h1>
+  <div class="month">
+    <h1>
+      <i class="arrow" (click)="arrow('month', 'left')">&lt;Προηγούμενος</i>
+      {{capitalizeFirstLetter(months[targetDay.getMonth()])}}, {{targetDay.getFullYear()}}
+      <i class="arrow" (click)="arrow('month', 'right')">Επόμενος></i>
+    </h1>
+    <div *ngFor="let monthDay of targetMonth" class="month_day">
+      <ng-container *ngTemplateOutlet="day; context:{ day : monthDay }"></ng-container>
+    </div>
+  </div>
 </ng-template>
 
 <ng-template #week>
   <div class="week">
-
     <h1>
-      <i class="arrow" (click)="arrow('week', 'left')">&lt;Previous</i>
-      <b>Week #{{weekNumber}}</b>
-      <i class="arrow" (click)="arrow('week', 'right')">Next></i>
+      <i class="arrow" (click)="arrow('week', 'left')">&lt;Προηγούμενη</i>
+      <b>Εβδομάδα #{{weekNumber}}</b>
+      <i class="arrow" (click)="arrow('week', 'right')">Επόμενη></i>
     </h1>
-    <div *ngFor="let weekday of targetWeek; let idx = index" class="week_day">
+    <div *ngFor="let weekday of targetWeek" class="week_day">
       <ng-container *ngTemplateOutlet="day; context:{ day : weekday }"></ng-container>
     </div>
   </div>
@@ -68,9 +98,9 @@
   <div [ngClass]="single ? 'day' : 'day not-single'">
     <div>
       <h1 [ngClass]="single ? '' : 'not-single'">
-        <i *ngIf="single" class="arrow" (click)="arrow('day', 'left')">&lt;Previous</i>
-        <b>{{capitalizeFirstLetter(days[targetDay.getDay()])}} {{dateToString(targetDay)}}</b>
-        <i *ngIf="single" class="arrow" (click)="arrow('day', 'right')">Next></i>
+        <i *ngIf="single" class="arrow" (click)="arrow('day', 'left')">&lt;Προηγούμενη</i>
+        <b>{{capitalizeFirstLetter(days[targetDay.getDay()])}} - {{dateToString(targetDay)}}</b>
+        <i *ngIf="single" class="arrow" (click)="arrow('day', 'right')">Επόμενη></i>
       </h1>
       <ng-container *ngTemplateOutlet="addNote; context:{ day : targetDay, single : single }"></ng-container>
     </div>
@@ -78,7 +108,7 @@
       *ngIf="allNotes[targetDay.getFullYear() - today.getFullYear() + 1][targetDay.getMonth()][targetDay.getDate()].length === 0"
       [ngClass]="single ? 'no_notes' : 'no_notes not-single'"
     >
-      No notes available for this day!
+      Αυτή η μέρα δεν έχει σημειώσεις!
     </div>
     <div
       *ngFor="let targetNote of allNotes[targetDay.getFullYear() - today.getFullYear() + 1][targetDay.getMonth()][targetDay.getDate()]; let idx = index; trackBy: trackByFn"
@@ -89,7 +119,7 @@
         (for)="'note' + idx"
         [ngClass]="single ? 'note_number' : 'note_number not-single'"
       >
-        <u>Note #{{idx + 1}}</u>:
+        <u>Σημείωση #{{idx + 1}}</u>:
       </label>
       <!-- Input Field -->
       <input

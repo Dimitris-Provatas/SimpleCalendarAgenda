@@ -1,3 +1,4 @@
+import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 
 type directions = "left" | "both" | "right";
@@ -10,41 +11,41 @@ type directions = "left" | "both" | "right";
 export class MainComponent implements OnInit
 {
   readonly types: string[] = [
-    "today",
-    "week",
-    "month",
-    "year"
+    "μέρα",
+    "εβδομάδα",
+    "μήνας",
+    "χρόνος"
   ];
 
   readonly days: string[] = [
-    "sunday",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
+    "κυριακή",
+    "δευτέρα",
+    "τρίτη",
+    "τετάρτη",
+    "πέμπτη",
+    "παρασκευή",
+    "σάββατο",
   ];
 
   readonly months: string[] = [
-    "january",
-    "february",
-    "march",
-    "april",
-    "may",
-    "june",
-    "july",
-    "august",
-    "september",
-    "october",
-    "november",
-    "december",
+    "ιανουάριος",
+    "φεβρουάριος",
+    "μάρτιος",
+    "απρίλιος",
+    "μάιος",
+    "ιούνιος",
+    "ιούλιος",
+    "αύγουστος",
+    "σεπτέμβριος",
+    "οκτώβριος",
+    "νοέμβριος",
+    "δεκέμβριος",
   ];
 
   loading: boolean = false;
 
   allowedDirections: directions = "both";
-  targetType: string = "week";
+  targetType: string = "χρόνος";
 
   today: Date;
   targetDay: Date;
@@ -52,6 +53,8 @@ export class MainComponent implements OnInit
 
   weekNumber: number;
   targetWeek: Date[] = [];
+  targetMonth: Date[] = [];
+  targetYear: any[] = [];
 
   allNotes: any[][][] = [];
 
@@ -62,14 +65,16 @@ export class MainComponent implements OnInit
   {
     this.today = new Date();
     this.targetDay = new Date();
-    this.setup(this.today);
     this.allNotes = this.allNoteSetup();
+    this.setup(this.today);
   }
 
   setup(day: Date): void
   {
     this.todayToString = this.dateToString(day);
     this.targetWeek = this.setupWeek(day);
+    this.targetMonth = this.setupMonth(day.getMonth());
+    setTimeout(() => { this.targetYear = this.setupYear(day.getFullYear()); }, 500);
   }
 
   allNoteSetup(): any[][][]
@@ -86,7 +91,7 @@ export class MainComponent implements OnInit
         toReturn[y].push([]);
         var monthDays = this.daysInMonth(m + 1, this.today.getFullYear() + y - 1)
 
-        for (let d = 0; d < monthDays; d++)
+        for (let d = 0; d <= monthDays; d++)
         {
           toReturn[y][m].push([]);
         }
@@ -114,7 +119,6 @@ export class MainComponent implements OnInit
     const targetDay = this.dateToString(day);
 
     await localStorage.setItem(targetDay, JSON.stringify(this.allNotes[day.getFullYear() - this.today.getFullYear() + 1][day.getMonth()][day.getDate()]));
-
     this.loading = false;
   }
 
@@ -130,6 +134,60 @@ export class MainComponent implements OnInit
   daysInMonth(month, year)
   {
     return new Date(year, month, 0).getDate();
+  }
+
+  setupMonth(monthNumber: number): Date[]
+  {
+    var toReturn: Date[] = [];
+
+    for (var i: number = 0; i < this.daysInMonth(monthNumber + 1, this.targetDay.getFullYear()) + 1; i++)
+    {
+      toReturn.push(this.createMonthDay(i, monthNumber));
+    }
+    toReturn.shift();
+
+    return toReturn;
+  }
+
+  createMonthDay(dayNumber: number, monthNumber: number): Date
+  {
+    return new Date(this.targetDay.getFullYear(), monthNumber, dayNumber)
+  }
+
+  setupYear(year: number)
+  {
+    var monthsWithData = [];
+    this.months.forEach((month, idx) =>
+    {
+      var daysWithNotes: number = 0;
+      var totalMonthNotes: number = 0;
+      for (var i: number = 0; i <= this.daysInMonth(idx, year); i++)
+      {
+        if (this.allNotes[year - this.today.getFullYear() + 1][idx][i] &&
+            this.allNotes[year - this.today.getFullYear() + 1][idx][i].length > 0
+        )
+        {
+          daysWithNotes += 1;
+          totalMonthNotes += this.allNotes[year - this.today.getFullYear() + 1][idx][i].length;
+        }
+      }
+
+      monthsWithData.push({
+        month: month,
+        daysWithNotes: daysWithNotes,
+        numberOfNotes: totalMonthNotes
+      });
+    });
+
+    return monthsWithData;
+  }
+
+  goToMonth(month: string)
+  {
+    this.targetDay.setMonth(this.months.indexOf(month));
+    this.setupMonth(this.months.indexOf(month));
+    this.targetType = "month";
+    this.setup(this.targetDay);
   }
 
   addNoteToDay(day: Date): void
@@ -272,6 +330,7 @@ export class MainComponent implements OnInit
             }
             break;
         }
+        this.targetMonth = this.setupMonth(this.targetDay.getMonth());
         break;
       case "year":
         // check if it is the last year or the next year
@@ -295,6 +354,7 @@ export class MainComponent implements OnInit
             }
             break;
         }
+        this.targetYear = this.setupYear(this.targetDay.getFullYear());
         break;
     }
   }
