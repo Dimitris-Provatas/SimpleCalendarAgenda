@@ -48,9 +48,9 @@
 <ng-template #year>
   <div class="year">
     <h1>
-      <i class="arrow" (click)="arrow('year', 'left')">&lt;Προηγούμενος</i>
+      <button class="arrow" (click)="arrow('χρόνος', 'left')">&lt;Προηγούμενος</button>
       <u>{{targetDay.getFullYear()}}</u>
-      <i class="arrow" (click)="arrow('year', 'right')">Επόμενος></i>
+      <button class="arrow" (click)="arrow('χρόνος', 'right')">Επόμενος></button>
     </h1>
     <div class="year_month" *ngFor="let month of targetYear">
       Στον {{capitalizeFirstLetter(month.month).slice(0, -1)}},
@@ -71,9 +71,9 @@
 <ng-template #month>
   <div class="month">
     <h1>
-      <i class="arrow" (click)="arrow('month', 'left')">&lt;Προηγούμενος</i>
+      <button class="arrow" (click)="arrow('μήνας', 'left')">&lt;Προηγούμενος</button>
       {{capitalizeFirstLetter(months[targetDay.getMonth()])}}, {{targetDay.getFullYear()}}
-      <i class="arrow" (click)="arrow('month', 'right')">Επόμενος></i>
+      <button class="arrow" (click)="arrow('μήνας', 'right')">Επόμενος></button>
     </h1>
     <div *ngFor="let monthDay of targetMonth" class="month_day">
       <ng-container *ngTemplateOutlet="day; context:{ day : monthDay }"></ng-container>
@@ -84,9 +84,9 @@
 <ng-template #week>
   <div class="week">
     <h1>
-      <i class="arrow" (click)="arrow('week', 'left')">&lt;Προηγούμενη</i>
+      <button class="arrow" (click)="arrow('βδομάδα', 'left')">&lt;Προηγούμενη</button>
       <b>Εβδομάδα #{{weekNumber}}</b>
-      <i class="arrow" (click)="arrow('week', 'right')">Επόμενη></i>
+      <button class="arrow" (click)="arrow('βδομάδα', 'right')">Επόμενη></button>
     </h1>
     <div *ngFor="let weekday of targetWeek" class="week_day">
       <ng-container *ngTemplateOutlet="day; context:{ day : weekday }"></ng-container>
@@ -98,9 +98,9 @@
   <div [ngClass]="single ? 'day' : 'day not-single'">
     <div>
       <h1 [ngClass]="single ? '' : 'not-single'">
-        <i *ngIf="single" class="arrow" (click)="arrow('day', 'left')">&lt;Προηγούμενη</i>
+        <button *ngIf="single" class="arrow" (click)="arrow('μέρα', 'left')">&lt;Προηγούμενη</button>
         <b>{{capitalizeFirstLetter(days[targetDay.getDay()])}} - {{dateToString(targetDay)}}</b>
-        <i *ngIf="single" class="arrow" (click)="arrow('day', 'right')">Επόμενη></i>
+        <button *ngIf="single" class="arrow" (click)="arrow('μέρα', 'right')">Επόμενη></button>
       </h1>
       <ng-container *ngTemplateOutlet="addNote; context:{ day : targetDay, single : single }"></ng-container>
     </div>
@@ -144,7 +144,7 @@
 <ng-template #addNote let-day="day" let-single="single">
   <div [ngClass]="single ? 'add_note' : 'add_note not-single'">
     <button (click)="addNoteToDay(day)">
-      <img src='../../assets/newnote.svg' />
+      <img src='assets/newnote.svg' />
     </button>
   </div>
 </ng-template>

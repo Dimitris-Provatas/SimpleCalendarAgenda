@@ -28,6 +28,7 @@
       "icon": "./src/assets/icon.png"
     },
     "files": [
+      "./src/public",
       "./dist/**/*",
       "./main.js"
     ]
