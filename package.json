@@ -20,8 +20,8 @@
     "electron": "electron main.js",
     "postinstall": "install-app-deps",
     "production:windows": "npm run build:prod && electron-builder build -w --publish never",
-    "production:linux": "npm run build:prod && electron-builder build -m --publish never",
-    "production:macos": "npm run build:prod && electron-builder build -l --publish never"
+    "production:linux": "npm run build:prod && electron-builder build -l --publish never",
+    "production:macos": "npm run build:prod && electron-builder build -m --publish never"
   },
   "build": {
     "appId": "gr.codingsheep.catendar",
