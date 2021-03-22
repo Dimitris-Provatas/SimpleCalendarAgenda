@@ -19,12 +19,20 @@
     "dist": "build",
     "electron": "electron main.js",
     "postinstall": "install-app-deps",
-    "production": "npm run build:prod && electron-builder build --windows --publish never"
+    "production:windows": "npm run build:prod && electron-builder build -w --publish never",
+    "production:linux": "npm run build:prod && electron-builder build -m --publish never",
+    "production:macos": "npm run build:prod && electron-builder build -l --publish never"
   },
   "build": {
     "appId": "gr.codingsheep.catendar",
     "productName": "Catendar",
     "win": {
+      "icon": "./src/assets/icon.png"
+    },
+    "linux": {
+      "icon": "./src/assets/icon.png"
+    },
+    "mac": {
       "icon": "./src/assets/icon.png"
     },
     "files": [
