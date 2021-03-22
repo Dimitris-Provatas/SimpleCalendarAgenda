@@ -104,9 +104,29 @@ export class MainComponent implements OnInit
     // get the values of each key and add them to the correct cells
     keys.forEach(async key =>
     {
-      const retrieved = await localStorage.getItem(key)
+      // key separation
       const keySplit = key.split("/");
-      toReturn[parseInt(keySplit[2]) - this.today.getFullYear() + 1][parseInt(keySplit[1]) - 1][parseInt(keySplit[0])] = JSON.parse(retrieved);
+      // delete stored notes from 2 years ago
+      if (parseInt(keySplit[2]) < this.today.getFullYear() - 1)
+      {
+        await localStorage.removeItem(key);
+
+        return;
+      }
+
+      // save myself from the trouble of the programm braking if the above code does not work
+      try
+      {
+        // the item
+        const retrieved = await localStorage.getItem(key);
+        // save the item to the correct day shell
+        toReturn[parseInt(keySplit[2]) - this.today.getFullYear() + 1][parseInt(keySplit[1]) - 1][parseInt(keySplit[0])] = JSON.parse(retrieved);
+      }
+      catch (err)
+      {
+        console.log(err);
+        return;
+      }
     });
 
     return toReturn;
